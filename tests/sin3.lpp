@@ -1,0 +1,3 @@
+SI (a > b) ENTONCES {
+    ENTERO i;
+}

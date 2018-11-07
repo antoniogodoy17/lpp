@@ -1,0 +1,19 @@
+PROCEDIMIENTO main() {
+    ENTERO i;
+    ENTERO j;
+    ENTERO rows -> 5;
+    ENTERO count -> 0;
+
+    POR (i) EN (1,(2*rows),(i+2)) {
+        POR (j) EN (1,i,1) {
+            count -> 0;
+        }
+        count -> 0;
+
+        SI (a > b) ENTONCES {
+            count -> -10.0;
+        }
+    }
+
+    REGRESA 0;
+}

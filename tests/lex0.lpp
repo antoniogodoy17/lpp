@@ -1,0 +1,25 @@
+ENTERO hola -> 5;
+CADENA cadenita;
+cadenita -> "5";
+@ESte
+es un 
+comentario SI (hola > 4) ENTONCES { ENTERO a -> 5 } @
+
+SI (hola > 3) ENTONCES {
+    BOOLEANO boli -> FALSO;
+
+    MIENTRAS (boli ? VERDADERO) {
+        boli -> VERDADERO;
+    }
+}
+PEROSI (cadenita ? "5") ENTONCES {
+    ENTERO MiNumerito -> 10;
+}
+
+PROCEDIMIENTO miProc(){
+    REGRESA "hola";
+}
+
+PROCEDIMIENTO procedimiento2(valor1, 4.3, "hola"){
+    CADENA Que_Show -> "asdfdas";
+}
