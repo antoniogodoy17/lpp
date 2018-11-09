@@ -179,15 +179,12 @@ def p_error(p):
 def printNodes(l, level=0):
     sentType = l[0]
     children = l[1:] 
-    x = ""
     tabs = ""
-    levelIndicator=""
 
     for i in range(level):
         tabs += "--"
 
     print(f'[{level}]{tabs}{sentType}:')
-    # print(f'[{level}]{tabs}{sentType}: {children if type(children) is dict else children if children is None or type(children) is int or type(children) is float else children[0]}')
     for elem in children:
         if type(elem) is tuple:
             printNodes(elem, level+1)
