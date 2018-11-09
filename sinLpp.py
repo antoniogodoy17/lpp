@@ -2,6 +2,7 @@ import ply.yacc as yacc
 from lexLpp import tokens
 import finder
 
+vars = {}
 start = 'programa'
 
 def p_programa(p):
@@ -61,14 +62,39 @@ def p_sino_op(p):
 def p_declaracion(p):
     '''declaracion : tipo IDENTIFICADOR TERMINACION'''
     p[0] = ('Declaracion',p[1],p[2])
+    if p[2].get('value') in vars:
+        vars.pop(p[2].get('value'))
+    vars[p[2].get('value')] = { 'type' : p[1][1].get('value'), 'value' : 'NULO'}
 
 def p_asignacion(p):
     '''asignacion : IDENTIFICADOR ASIGNACION valor TERMINACION'''
     p[0] = ('Asignacion',p[1], p[3])
 
+    if p[1].get('value') in vars:
+        varType = vars[p[1].get('value')].get('type')
+        vars.pop(p[1].get('value'))
+        if type(p[3][1]) is tuple:
+            if p[3][1][0] == 'Numero':
+                vars[p[1].get('value')] = { 'type' : varType, 'value' : p[3][1][1]}
+            elif p[3][1][0] == 'Expresion':
+                vars[p[1].get('value')] = { 'type' : varType, 'value' : (p[3][1][1][1][1],p[3][1][1][2][1].get('value'),p[3][1][1][3][1])}
+        else:
+            vars[p[1].get('value')] = { 'type' : varType, 'value' : p[3][1].get('value')}
+    else:
+        print(f'Variable "{p[1].get("value")}" not declared.')
+
 def p_instancia(p):
     '''instancia : tipo IDENTIFICADOR ASIGNACION valor TERMINACION'''
     p[0] = ('Instancia',p[1],p[2],p[4])
+    if p[2].get('value') in vars:
+        vars.pop(p[2].get('value'))
+    if type(p[4][1]) is tuple:            
+        if p[4][1][0] == 'Numero':
+            vars[p[2].get('value')] = { 'type' : p[1][1].get('value'), 'value' : p[4][1][1]}
+        elif p[4][1][0] == 'Expresion':
+            vars[p[2].get('value')] = { 'type' : p[1][1].get('value'), 'value' : (p[4][1][1][1][1],p[4][1][1][2][1].get('value'),p[4][1][1][3][1])}
+    else:
+        vars[p[2].get('value')] = { 'type' : p[1][1].get('value'), 'value' : p[4][1].get('value')}
 
 def p_valor(p):
     '''valor : BOOLEANO
@@ -179,20 +205,15 @@ def p_error(p):
 def printNodes(l, level=0):
     sentType = l[0]
     children = l[1:] 
-    tabs = ""
-
-    for i in range(level):
-        tabs += "--"
+    tabs = "--" * level
 
     print(f'[{level}]{tabs}{sentType}:')
     for elem in children:
         if type(elem) is tuple:
             printNodes(elem, level+1)
         else:
-            tempTabs = tabs + "--"
-            print(f'[{level+1}]{tabs + "--"}{elem}')
+            print(f'[{level}]{tabs + "--"}{elem}')
 
 parser = yacc.yacc()
 r = parser.parse(finder.search())
-printNodes(r)
-
+# printNodes(r)

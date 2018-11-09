@@ -134,6 +134,10 @@ def t_ENTERO(t):
 
 def t_CADENA(t):
     r'".*"'
+    t.value = {
+        'category' : t.type,
+        'value' : t.value
+    }
     return t
 
 def t_OPERADOR_RELACIONAL(t):
