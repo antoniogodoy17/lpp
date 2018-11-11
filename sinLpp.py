@@ -48,17 +48,17 @@ def p_perosi_op(p):
     '''perosi_op : vacio 
                  | PEROSI SIGNO_PAR_IZQ expresion SIGNO_PAR_DER ENTONCES SIGNO_LLAVE_IZQ sentencias SIGNO_LLAVE_DER perosi_op'''
     if len(p) > 2:
-        p[0] = ('Pero Si Opcional', p[3],p[7],p[9])
+        p[0] = ('Pero Si', p[3],p[7],p[9])
     else:
-        p[0] = ('Pero Si Opcional', p[1])
+        p[0] = ('Pero Si', p[1])
 
 def p_sino_op(p):
     '''sino_op : vacio
                | SINO SIGNO_LLAVE_IZQ sentencias SIGNO_LLAVE_DER'''
     if len(p) > 2:
-        p[0] = ('Si No Opcional',p[3])
+        p[0] = ('Si No',p[3])
     else:
-        p[0] = ('Si No Opcional',p[1])
+        p[0] = ('Si No',p[1])
 
 def p_declaracion(p):
     '''declaracion : tipo IDENTIFICADOR TERMINACION'''
@@ -129,6 +129,7 @@ def p_operacion_logica(p):
 def p_procedimiento(p):
     '''procedimiento : PROCEDIMIENTO IDENTIFICADOR SIGNO_PAR_IZQ parametros_op SIGNO_PAR_DER SIGNO_LLAVE_IZQ sentencias regresa_op SIGNO_LLAVE_DER'''
     p[0] = ('Procedimiento', p[2],p[4],p[7],p[8])
+    vars[p[2].get('value')] = { 'type': p[1], 'value': p[2].get('value') }
 
 def p_parametros_op(p):
     '''parametros_op : vacio
@@ -228,4 +229,3 @@ def createTree(l, level=0, parent=None):
 parser = yacc.yacc()
 r = parser.parse(finder.search())
 createTree(r)
-print(tree)
