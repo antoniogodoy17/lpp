@@ -1,9 +1,10 @@
 import ply.yacc as yacc
 from lexLpp import tokens
+from ast import Tree, Node
 import finder
 
+tree = Tree()
 vars = {}
-start = 'programa'
 
 def p_programa(p):
     '''programa : sentencias'''
@@ -33,7 +34,7 @@ def p_ciclo(p):
 
 def p_por(p): 
     '''por : POR SIGNO_PAR_IZQ IDENTIFICADOR SIGNO_PAR_DER EN SIGNO_PAR_IZQ termino COMA termino COMA termino SIGNO_PAR_DER SIGNO_LLAVE_IZQ sentencias SIGNO_LLAVE_DER'''
-    p[0] = ('Por',p[3],p[7],[9],p[11],p[14])
+    p[0] = ('Por',p[3],p[7],p[9],p[11],p[14])
 
 def p_mientras(p):
     '''mientras : MIENTRAS SIGNO_PAR_IZQ expresion SIGNO_PAR_DER SIGNO_LLAVE_IZQ sentencias SIGNO_LLAVE_DER'''
@@ -64,22 +65,18 @@ def p_declaracion(p):
     p[0] = ('Declaracion',p[1],p[2])
     if p[2].get('value') in vars:
         vars.pop(p[2].get('value'))
-    vars[p[2].get('value')] = { 'type' : p[1][1].get('value'), 'value' : 'NULO'}
+    vars[p[2].get('value')] = { 'type' : p[1].get('value'), 'value' : 'NULO'}
 
 def p_asignacion(p):
     '''asignacion : IDENTIFICADOR ASIGNACION valor TERMINACION'''
     p[0] = ('Asignacion',p[1], p[3])
-
     if p[1].get('value') in vars:
         varType = vars[p[1].get('value')].get('type')
         vars.pop(p[1].get('value'))
-        if type(p[3][1]) is tuple:
-            if p[3][1][0] == 'Numero':
-                vars[p[1].get('value')] = { 'type' : varType, 'value' : p[3][1][1]}
-            elif p[3][1][0] == 'Expresion':
-                vars[p[1].get('value')] = { 'type' : varType, 'value' : (p[3][1][1][1][1],p[3][1][1][2][1].get('value'),p[3][1][1][3][1])}
-        else:
-            vars[p[1].get('value')] = { 'type' : varType, 'value' : p[3][1].get('value')}
+        if type(p[3]) is tuple:
+            vars[p[1].get('value')] = { 'type' : varType, 'value' : (p[3][1],p[3][2].get('value'),p[3][3])}
+        elif type(p[4]) is dict:
+            vars[p[1].get('value')] = { 'type' : varType, 'value' : p[3].get('value')}
     else:
         print(f'Variable "{p[1].get("value")}" not declared.')
 
@@ -88,37 +85,33 @@ def p_instancia(p):
     p[0] = ('Instancia',p[1],p[2],p[4])
     if p[2].get('value') in vars:
         vars.pop(p[2].get('value'))
-    if type(p[4][1]) is tuple:            
-        if p[4][1][0] == 'Numero':
-            vars[p[2].get('value')] = { 'type' : p[1][1].get('value'), 'value' : p[4][1][1]}
-        elif p[4][1][0] == 'Expresion':
-            vars[p[2].get('value')] = { 'type' : p[1][1].get('value'), 'value' : (p[4][1][1][1][1],p[4][1][1][2][1].get('value'),p[4][1][1][3][1])}
-    else:
-        vars[p[2].get('value')] = { 'type' : p[1][1].get('value'), 'value' : p[4][1].get('value')}
+    if type(p[4]) is tuple:
+        vars[p[2].get('value')] = { 'type' : p[1].get('value'), 'value' : (p[4][1],p[4][2].get('value'),p[4][3])}
+    elif type(p[4]) is dict:
+        vars[p[2].get('value')] = { 'type' : p[1].get('value'), 'value' : p[4].get('value')}
 
 def p_valor(p):
     '''valor : BOOLEANO
              | numero
              | CADENA
              | IDENTIFICADOR 
-             | expresion
-             | NULO'''
-    p[0] = ('Valor',p[1])
+             | expresion'''
+    p[0] = p[1]
 
 def p_expresion(p):
     '''expresion : operacion_aritmetica
                  | operacion_logica
                  | operacion_relacional'''
-    p[0] = ('Expresion',p[1])
+    p[0] = p[1]
 
 def p_termino(p):
     '''termino : numero
                | IDENTIFICADOR
                | SIGNO_PAR_IZQ operacion_aritmetica SIGNO_PAR_DER'''
     if len(p) > 2:
-        p[0] = ('Termino',p[2])
+        p[0] = p[2]
     else:
-        p[0] = ('Termino',p[1])
+        p[0] = p[1]
 
 def p_operacion_aritmetica(p):
     '''operacion_aritmetica : termino operador_aritmetico termino'''
@@ -163,7 +156,7 @@ def p_regresa_op(p):
 def p_numero(p):
     '''numero : ENTERO
               | DECIMAL'''
-    p[0] = ('Numero', p[1])
+    p[0] = p[1]
 
 def p_tipo(p):
     '''tipo : TIPO_ENTERO
@@ -171,7 +164,7 @@ def p_tipo(p):
             | TIPO_BOOLEANO
             | TIPO_CADENA
             | TIPO_CONSTANTE'''
-    p[0] = ('Tipo',p[1])
+    p[0] = p[1]
 
 def p_operador_aritmetico(p):
     '''operador_aritmetico : SIGNO_MULT
@@ -179,12 +172,12 @@ def p_operador_aritmetico(p):
                            | SIGNO_RES
                            | SIGNO_DIV
                            | SIGNO_MOD'''
-    p[0] = ('Operador Aritmetico', p[1])
+    p[0] = p[1]
 
 def p_operador_logico(p):
     '''operador_logico : SIGNO_O
                        | SIGNO_Y'''
-    p[0] = ('Operador Logico', p[1])
+    p[0] = p[1]
 
 def p_operador_relacional(p):
     '''operador_relacional : MAYOR_IGUAL
@@ -193,7 +186,7 @@ def p_operador_relacional(p):
                            | IGUAL
                            | MAYOR
                            | MENOR'''
-    p[0] = ('Operador Relacional', p[1])
+    p[0] = p[1]
 
 def p_vacio(p):
     '''vacio :'''
@@ -214,6 +207,25 @@ def printNodes(l, level=0):
         else:
             print(f'[{level}]{tabs + "--"}{elem}')
 
+def createTree(l, level=0, parent=None):
+    sentType = l[0]
+    children = l[1:]
+    node = Node(value=sentType, level=level)
+    
+    if parent:
+        parent.addChild(node)
+
+    if level == 0:
+        tree.setStart(node)
+
+    for elem in children:
+        if type(elem) is tuple:
+            createTree(l=elem, level=level+1, parent=node)
+        else:
+            child = Node(level=level+1,value=elem)
+            node.addChild(child)
+
 parser = yacc.yacc()
 r = parser.parse(finder.search())
-# printNodes(r)
+createTree(r)
+print(tree)
