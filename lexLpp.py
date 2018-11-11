@@ -61,7 +61,7 @@ categorias = {
     'TIPO_CADENA'       : 'TIPO',
     'TIPO_ENTERO'       : 'TIPO',
     'TIPO_CONSTANTE'    : 'TIPO',
-    'NULO'              : 'TIPO',
+    'NULO'              : 'NULO',
 
     'PROCEDIMIENTO'     : 'RESERVADA',
     'ENTONCES'          : 'RESERVADA',
@@ -96,6 +96,10 @@ def t_NEWLINE(t):
 
 def t_ASIGNACION(t):
     r'->'
+    t.value = {
+        'category' : 'ASIGNACION',
+        'value' : t.value
+    }
     return t
 
 def t_COMENTARIO(t):
@@ -124,12 +128,20 @@ def t_IDENTIFICADOR(t):
     
 def t_DECIMAL(t):
     r'-?\d+\.\d+'
-    t.value = float(t.value)
+    t.value = {
+        'category' : 'DECIMAL',
+        'value' : float(t.value)
+    }
+    # t.value = float(t.value)
     return t
 
 def t_ENTERO(t):
     r'-?\d+'
-    t.value = int(t.value)
+    t.value = {
+        'category' : 'ENTERO',
+        'value' : int(t.value)
+    }
+    # t.value = int(t.value)
     return t
 
 def t_CADENA(t):

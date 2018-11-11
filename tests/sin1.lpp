@@ -1,8 +1,9 @@
-PROCEDIMIENTO main() {
-    ENTERO i -> 0;
+PROCEDIMIENTO main(a,b,c) {
+    ENTERO i -> "asdfasdfa";
+    ENTERO K;
     SI((l < 10) & (a < 20)) ENTONCES {
         POR(i) EN (0,10,2) {
-            j -> i;
+            j -> NULO;
         }
         i -> i / 1;
         MIENTRAS(j < 10) {
