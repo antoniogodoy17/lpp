@@ -1,13 +1,14 @@
 PROCEDIMIENTO main(a,b,c) {
-    ENTERO i -> 5;
+    ENTERO i -> 5 * (2 + 3);
     ENTERO k;
+    CADENA z;
     SI((l < 10) & (a < 20)) ENTONCES {
         POR(i) EN (0,10,2) {
-            j -> NULO;
+            x -> 9.0;
         }
         i -> i / 1;
         MIENTRAS(j < 10) {
-            z -> z;
+            z -> "hola";
         }
         ENTERO l -> 0;
     }

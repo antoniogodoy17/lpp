@@ -1,4 +1,8 @@
+ENTERO x -> 5;
+ENTERO w -> 5;
+ENTERO contador -> 0;
+
 MIENTRAS ((a >= 5) & (x*w)) {
-    contador -> contador + 1;
+    contador -> w + 1;
     BOOLEANO boli -> (a) | (b);
 }

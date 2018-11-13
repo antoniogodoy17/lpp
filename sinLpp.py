@@ -65,18 +65,35 @@ def p_declaracion(p):
     p[0] = ('Declaracion',p[1],p[2])
     if p[2].get('value') in vars:
         vars.pop(p[2].get('value'))
-    vars[p[2].get('value')] = { 'type' : p[1].get('value'), 'value' : 'NULO'}
+    vars[p[2].get('value')] = { 'category' : p[1].get('value'), 'value' : 'NULO'}
 
 def p_asignacion(p):
     '''asignacion : IDENTIFICADOR ASIGNACION valor TERMINACION'''
     p[0] = ('Asignacion',p[1], p[3])
     if p[1].get('value') in vars:
-        varType = vars[p[1].get('value')].get('type')
+        varType = vars[p[1].get('value')].get('category')
+        varValue = vars[p[1].get('value')].get('value')
         vars.pop(p[1].get('value'))
         if type(p[3]) is tuple:
-            vars[p[1].get('value')] = { 'type' : varType, 'value' : (p[3][1],p[3][2].get('value'),p[3][3])}
-        elif type(p[4]) is dict:
-            vars[p[1].get('value')] = { 'type' : varType, 'value' : p[3].get('value')}
+            # if p[3][1].get('value') == p[1].get('value'):
+            #     #Change the value of the p[0] tuple
+            #     parentList = list(p[0])
+            #     childList = list(parentList[2])
+            #     childList[1] = { 'category': varType,'value': varValue }
+            #     parentList[2] = tuple(childList)
+            #     p[0] = tuple(parentList)
+
+            #     #Change the value of the p[3] tuple
+            #     parentList = list(p[3])
+            #     childList = list(parentList[1])
+            #     childList = { 'category': varType,'value': varValue }
+            #     print(childList)
+            #     parentList[1] = childList
+            #     print(parentList)
+            #     p[3] = tuple(parentList)
+            vars[p[1].get('value')] = { 'category' : varType, 'value' : (p[3][0],p[3][1],p[3][2],p[3][3])}
+        elif type(p[3]) is dict:
+            vars[p[1].get('value')] = { 'category' : varType, 'value' : p[3].get('value')}
     else:
         print(f'Variable "{p[1].get("value")}" not declared.')
 
@@ -86,9 +103,9 @@ def p_instancia(p):
     if p[2].get('value') in vars:
         vars.pop(p[2].get('value'))
     if type(p[4]) is tuple:
-        vars[p[2].get('value')] = { 'type' : p[1].get('value'), 'value' : (p[4][1],p[4][2].get('value'),p[4][3])}
+        vars[p[2].get('value')] = { 'category' : p[1].get('value'), 'value' : (p[4][0],p[4][1],p[4][2],p[4][3])}
     elif type(p[4]) is dict:
-        vars[p[2].get('value')] = { 'type' : p[1].get('value'), 'value' : p[4].get('value')}
+        vars[p[2].get('value')] = { 'category' : p[1].get('value'), 'value' : p[4].get('value')}
 
 def p_valor(p):
     '''valor : BOOLEANO
@@ -129,7 +146,7 @@ def p_operacion_logica(p):
 def p_procedimiento(p):
     '''procedimiento : PROCEDIMIENTO IDENTIFICADOR SIGNO_PAR_IZQ parametros_op SIGNO_PAR_DER SIGNO_LLAVE_IZQ sentencias regresa_op SIGNO_LLAVE_DER'''
     p[0] = ('Procedimiento', p[2],p[4],p[7],p[8])
-    vars[p[2].get('value')] = { 'type': p[1], 'value': p[2].get('value') }
+    vars[p[2].get('value')] = { 'category': p[1].get('value'), 'value': p[2].get('value') }
 
 def p_parametros_op(p):
     '''parametros_op : vacio
