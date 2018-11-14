@@ -3,6 +3,6 @@ ENTERO w -> 5;
 ENTERO contador -> 0;
 
 MIENTRAS ((a >= 5) & (x*w)) {
-    contador -> w + 1;
+    contador -> contador + 1;
     BOOLEANO boli -> (a) | (b);
 }

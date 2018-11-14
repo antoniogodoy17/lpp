@@ -8,9 +8,6 @@ def throwError(message):
     print(vars)
     exit(0)
 
-def checkSiNo(Node):
-    pass
-
 def checkPeroSi(node):
     pass
 
@@ -103,37 +100,92 @@ def checkOpRel(node):
     op = node.children[1].value.get('value')
     right = node.children[2]
 
-    #Check left
+    #Check if the left value is an aritmetic operation
+    if left.value == 'Operacion Aritmetica':
+        left = checkOpArit(node.children[0])
+    elif left.value == 'Operacion Relacional':
+        left = checkOpRel(node.children[0])
+    elif left.value == 'Operacion Logica':
+        pass
+    #Check if the left value is a dictionary,then it could be an identifier so we need to extract its value and assign it to left
+    elif type(left.value) is dict:
+        if left.value.get('category') == 'IDENTIFICADOR':
+            #If left is a var, get the var value from the vars dictionary
+            if left.value.get('value') in vars:
+                left = vars[left.value.get('value')]
+            #If left is a var and it is not in the vars dictionary, throw an error
+            else:
+                throwError(f'ERROR: Variable {left.value.get("value")} no declarada.')
+        else:
+            #If left is a dictionary but not an identifier, just extract its value
+            left = left.value
 
-    #Check right
+    #Check if the right value is an aritmetic operation
+    if right.value == 'Operacion Aritmetica':
+        right = checkOpArit(node.children[2])
+    elif right.value == 'Operacion Relacional':
+        right = checkOpLog(node.children[2])
+    elif right.value == 'Operacion Logica':
+        pass
+    #Check if the right value is a dictionary,then it could be an identifier so we need to extract its value and assign it to right
+    elif type(right.value) is dict:
+        if right.value.get('category') == 'IDENTIFICADOR':
+            #If right is a var, get the var value from the vars dictionary
+            if right.value.get('value') in vars:
+                right = vars[right.value.get('value')]
+            #If right is a var and it is not in the vars dictionary, throw an error
+            else:
+                throwError(f'ERROR: Variable {right.value.get("value")} no declarada.')
+        else:
+            #If right is a dictionary but not an identifier, just extract its value
+            right = right.value
 
     #Check value
     if op == '=':
-        pass
+        if left.get('category') == right.get('category'):
+            result = { 'category': 'TIPO_BOOLEANO', 'value': 'VERDADERO' if left.get('value') == right.get('value') else 'FALSO' }
+        else:
+            throwError(f'ERROR: No se pudo ejecutar la operación con valores incompatibles {left.get("category")} y {right.get("category")}.')
     if op == '<':
-        pass
+        if left.get('category') == right.get('category'):
+            result = { 'category': 'TIPO_BOOLEANO', 'value': 'VERDADERO' if left.get('value') < right.get('value') else 'FALSO' }
+        else:
+            throwError(f'ERROR: No se pudo ejecutar la operación con valores incompatibles {left.get("category")} y {right.get("category")}.')
     if op == '>':
-        pass
+        if left.get('category') == right.get('category'):
+            result = { 'category': 'TIPO_BOOLEANO', 'value': 'VERDADERO' if left.get('value') > right.get('value') else 'FALSO' }
+        else:
+            throwError(f'ERROR: No se pudo ejecutar la operación con valores incompatibles {left.get("category")} y {right.get("category")}.')
     if op == '<=':
-        pass
+        if left.get('category') == right.get('category'):
+            result = { 'category': 'TIPO_BOOLEANO', 'value': 'VERDADERO' if left.get('value') <= right.get('value') else 'FALSO' }
+        else:
+            throwError(f'ERROR: No se pudo ejecutar la operación con valores incompatibles {left.get("category")} y {right.get("category")}.')
     if op == '>=':
-        pass
+        if left.get('category') == right.get('category'):
+            result = { 'category': 'TIPO_BOOLEANO', 'value': 'VERDADERO' if left.get('value') >= right.get('value') else 'FALSO' }
+        else:
+            throwError(f'ERROR: No se pudo ejecutar la operación con valores incompatibles {left.get("category")} y {right.get("category")}.')
     if op == '?':
-        pass
+        if left.get('category') == right.get('category'):
+            result = { 'category': 'TIPO_BOOLEANO', 'value': 'VERDADERO' if left.get('value') != right.get('value') else 'FALSO' }
+        else:
+            throwError(f'ERROR: No se pudo ejecutar la operación con valores incompatibles {left.get("category")} y {right.get("category")}.')
+    
+    return result
 
 def checkOpLog(node):
     left = node.children[0]
     op = node.children[1].value.get('value')
     right = node.children[2]
 
-    # print("***************************")
-    # print(left.children)
-    # print(right.value)
-    # print("***************************")
-
     #Check left
     if left.value == 'Operacion Aritmetica':
         left = checkOpArit(left)
+    elif left.value == 'Operacion Relacional':
+        pass
+    elif left.value == 'Operacion Logica':
+        pass
     # elif left.value == 'Operacion Ar'
 
     #Check right
@@ -164,6 +216,12 @@ def checkAsignacion(node):
             vars.pop(varId)
             vars[varId] = newValue
         #Check if value is an identifier
+        elif newValue == 'Operacion Relacional':
+            newValue = checkOpRel(node.children[1])
+            vars.pop(varId)
+            vars[varId] = newValue
+        elif newValue == 'Operacion Logica':
+            pass
         elif newValue.get('category') == 'IDENTIFICADOR':
             #Check if var exists in vars dictionary
             if newValue.get('value') in vars:
@@ -180,7 +238,8 @@ def checkAsignacion(node):
                 throwError(f'ERROR: Variable {newValue.get("value")} no declarada.')
         #Check if value is NULO
         elif newValue.get('category') == 'NULO':
-            pass
+            vars.pop(varId)
+            vars[varId] = newValue
         #Value should be some other value
         else:
             if varType == newValue.get('category'):
@@ -214,8 +273,16 @@ def checkInstancia(node):
         vars.pop(varId)
         #Add the key with the new assigned value
         vars[varId] = newValue
+    elif varValue.value == 'Operacion Relacional':
+        #Check aritmetic operation
+        newValue = checkOpRel(varValue)
+        #Delete variable with old value from dictionary
+        vars.pop(varId)
+        #Add the key with the new assigned value
+        vars[varId] = newValue
+    elif varValue.value == 'Operacion Logica':
+        pass
 
-        print(f'LEFT: {left}')
 def noCheck(node):
     pass
 
@@ -231,7 +298,6 @@ def checkNode(node):
         'Condicional': checkCondicional,
         'Mientras': checkMientras,
         'Pero Si': checkPeroSi,
-        'Si No': checkSiNo,
         'Por': checkPor
     }
     if type(node.value) is not dict:

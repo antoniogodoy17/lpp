@@ -1,6 +1,6 @@
 PROCEDIMIENTO main(a,b,c) {
-    ENTERO i -> 5 * (2 + 3);
-    ENTERO k;
+    ENTERO i -> 5 * (2 + (3 * (0 - -1) ) );
+    ENTERO x;
     CADENA z;
     SI((l < 10) & (a < 20)) ENTONCES {
         POR(i) EN (0,10,2) {

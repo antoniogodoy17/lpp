@@ -75,22 +75,22 @@ def p_asignacion(p):
         varValue = vars[p[1].get('value')].get('value')
         vars.pop(p[1].get('value'))
         if type(p[3]) is tuple:
-            # if p[3][1].get('value') == p[1].get('value'):
-            #     #Change the value of the p[0] tuple
-            #     parentList = list(p[0])
-            #     childList = list(parentList[2])
-            #     childList[1] = { 'category': varType,'value': varValue }
-            #     parentList[2] = tuple(childList)
-            #     p[0] = tuple(parentList)
+            if p[3][1].get('value') == p[1].get('value'):
+                #Change the value of the p[0] tuple
+                parentList = list(p[0])
+                childList = list(parentList[2])
+                childList[1] = { 'category': varType,'value': varValue }
+                parentList[2] = tuple(childList)
+                p[0] = tuple(parentList)
 
-            #     #Change the value of the p[3] tuple
-            #     parentList = list(p[3])
-            #     childList = list(parentList[1])
-            #     childList = { 'category': varType,'value': varValue }
-            #     print(childList)
-            #     parentList[1] = childList
-            #     print(parentList)
-            #     p[3] = tuple(parentList)
+                #Change the value of the p[3] tuple
+                parentList = list(p[3])
+                childList = list(parentList[1])
+                childList = { 'category': varType,'value': varValue }
+                print(childList)
+                parentList[1] = childList
+                print(parentList)
+                p[3] = tuple(parentList)
             vars[p[1].get('value')] = { 'category' : varType, 'value' : (p[3][0],p[3][1],p[3][2],p[3][3])}
         elif type(p[3]) is dict:
             vars[p[1].get('value')] = { 'category' : varType, 'value' : p[3].get('value')}
@@ -101,6 +101,22 @@ def p_instancia(p):
     '''instancia : tipo IDENTIFICADOR ASIGNACION valor TERMINACION'''
     p[0] = ('Instancia',p[1],p[2],p[4])
     if p[2].get('value') in vars:
+        if p[3][1].get('value') == p[1].get('value'):
+            #Change the value of the p[0] tuple
+            parentList = list(p[0])
+            childList = list(parentList[2])
+            childList[1] = { 'category': varType,'value': varValue }
+            parentList[2] = tuple(childList)
+            p[0] = tuple(parentList)
+
+            #Change the value of the p[3] tuple
+            parentList = list(p[3])
+            childList = list(parentList[1])
+            childList = { 'category': varType,'value': varValue }
+            print(childList)
+            parentList[1] = childList
+            print(parentList)
+            p[3] = tuple(parentList)
         vars.pop(p[2].get('value'))
     if type(p[4]) is tuple:
         vars[p[2].get('value')] = { 'category' : p[1].get('value'), 'value' : (p[4][0],p[4][1],p[4][2],p[4][3])}
