@@ -1,5 +1,5 @@
 PROCEDIMIENTO main() {
-    ENTERO i;
+    ENTERO i -> 0;
     ENTERO j;
     ENTERO rows -> 5;
     ENTERO count -> 0;
@@ -10,8 +10,8 @@ PROCEDIMIENTO main() {
         }
         count -> 0;
 
-        SI (a > b) ENTONCES {
-            count -> -10.0;
+        SI (i > rows) ENTONCES {
+            count -> -10;
         }
     }
 

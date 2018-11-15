@@ -1,5 +1,7 @@
 ENTERO x -> 5;
 ENTERO w -> 5;
+ENTERO a -> 10;
+ENTERO b -> 0;
 ENTERO contador -> 0;
 
 MIENTRAS ((a >= 5) & (x*w)) {
