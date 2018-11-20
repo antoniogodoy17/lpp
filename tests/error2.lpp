@@ -1,0 +1,10 @@
+ENTERO x -> 5;
+ENTERO w -> 5;
+ENTERO a -> 10;
+ENTERO b -> 0;
+ENTERO contador; @Variable con valor nulo asignado@
+
+MIENTRAS ((a >= 5) & (x*w)) {
+    contador -> contador + 1; @No se puede realizar una suma de nulo y un numero@
+    BOOLEANO boli -> (a) | (b);
+}

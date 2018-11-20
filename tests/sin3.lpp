@@ -1,3 +1,0 @@
-SI (5 ? 6) ENTONCES {
-    ENTERO i;
-}

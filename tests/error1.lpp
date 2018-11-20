@@ -1,0 +1,16 @@
+PROCEDIMIENTO main(a,b,c) {
+    ENTERO j ->  10 * 5.2; @Asignacion decimal a un tipo entero@
+    ENTERO i -> 5;
+    ENTERO l -> 11;
+    ENTERO x;
+    CADENA z;
+    SI((l < 10) & (i < 20)) ENTONCES {
+        POR(i) EN (0,10,2) {
+            x -> 9;
+        }
+        i -> i / 1;
+        MIENTRAS(j < 10) {
+            z -> "hola";
+        }
+    }
+}

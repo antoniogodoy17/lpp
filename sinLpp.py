@@ -99,8 +99,6 @@ class SyntacticAnalyzer():
                 self.vars[p[1].get('value')] = { 'category' : varType, 'value' : (p[3][0],p[3][1],p[3][2],p[3][3])}
             elif type(p[3]) is dict:
                 self.vars[p[1].get('value')] = { 'category' : varType, 'value' : p[3].get('value')}
-        else:
-            print(f'Variable "{p[1].get("value")}" not declared.')
 
     def p_instancia(self, p):
         '''instancia : tipo IDENTIFICADOR ASIGNACION valor TERMINACION'''

@@ -1,0 +1,17 @@
+PROCEDIMIENTO main() {
+    ENTERO i -> 0;
+    ENTERO j;
+    ENTERO rows -> 5;
+
+    POR (i) EN (1,(2*rows),(i+2)) {
+        POR (j) EN (1,i,1) {
+            count -> 0; @Variable count no declarada@
+        }
+
+        SI (i > rows) ENTONCES {
+            count -> -10;
+        }
+    }
+
+    REGRESA 0;
+}
