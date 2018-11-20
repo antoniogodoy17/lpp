@@ -69,7 +69,6 @@ class LexicalAnalyzer():
         'REGRESA'           : 'RESERVADA',
         'SINO'              : 'RESERVADA',
         'POR'               : 'RESERVADA',
-        'FIN'               : 'RESERVADA',
         'SI'                : 'RESERVADA',
         'EN'                : 'RESERVADA',
 
@@ -103,7 +102,7 @@ class LexicalAnalyzer():
         return t
 
     def t_COMENTARIO(self, t):
-        r'@(.|\n)*@'
+        r'@([^@]|\n)*@'
         pass
 
     def t_BOOLEANO(self, t):
@@ -132,7 +131,6 @@ class LexicalAnalyzer():
             'category' : 'DECIMAL',
             'value' : float(t.value)
         }
-        # t.value = float(t.value)
         return t
 
     def t_ENTERO(self, t):
@@ -141,7 +139,6 @@ class LexicalAnalyzer():
             'category' : 'ENTERO',
             'value' : int(t.value)
         }
-        # t.value = int(t.value)
         return t
 
     def t_CADENA(self, t):

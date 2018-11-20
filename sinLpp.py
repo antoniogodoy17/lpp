@@ -230,7 +230,7 @@ class SyntacticAnalyzer():
         pass
 
     def p_error(self, p):
-        print(f'Error de sintaxis en la linea {str(p.lineno)}.\n\t"{p}"')
+        print(f'Error de sintaxis en la linea {str(p.lineno)}. "{p}"')
 
     def printNodes(self, l, level=0):
         sentType = l[0]
