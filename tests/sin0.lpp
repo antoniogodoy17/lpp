@@ -12,6 +12,9 @@ PROCEDIMIENTO main() {
 
         SI (i > rows) ENTONCES {
             count -> -10;
+            POR (j) EN (1,i,1) {
+                count -> 0;
+            }
         }
     }
 

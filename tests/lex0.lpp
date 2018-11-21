@@ -15,6 +15,9 @@ SI (hola > 3) ENTONCES {
 PEROSI (cadenita ? "5") ENTONCES {
     ENTERO MiNumerito -> 10;
 }
+PEROSI (cadenita = "10") ENTONCES {
+    ENTERO otroNumerito -> 10;
+}
 
 PROCEDIMIENTO miProc(){
     REGRESA "hola";

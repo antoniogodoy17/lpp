@@ -6,6 +6,7 @@ class SemanticAnalyzer():
         self.tempVars = 0
         self.scopes = 0
         self.labels = []
+        self.labelsDict = {}
 
     def analyze(self, node):
         self.checkNode(node)
@@ -171,6 +172,11 @@ class SemanticAnalyzer():
 
         self.labels.append( (f'L{myScope}','CONDICIONAL') )
         self.scopes+=1
+        self.labels.append( (f'L{myScope} -> FALSO',f'L{self.scopes}') )
+        self.labelsDict[self.scopes] = 'CONDICIONAL'
+        self.scopes+=1
+        trueScope = self.scopes
+        self.labels.append( (f'L{myScope} -> VERDADERO',f'L{trueScope}') )
 
         self.checkNode(expr)
         for child in sent.children:
@@ -179,13 +185,36 @@ class SemanticAnalyzer():
         self.checkNode(siNo)
 
         self.labels.append( (f'L{myScope}','CONDICIONAL') )
+        if self.scopes == trueScope:
+            self.scopes+=1
 
     def checkPeroSi(self, node):
-        myScope = self.scopes
+        prevScope = None
+        tempDict = self.labelsDict.copy()
+
+        for key in self.labelsDict.keys():
+            if self.labelsDict.get(key) == 'CONDICIONAL' or self.labelsDict.get(key) == 'PERO SI':
+                prevScope = key
+            tempDict.pop(key)
+        self.labelsDict = tempDict
+
+        if prevScope:
+            myScope = prevScope
+        else:
+            myScope = self.scopes
 
         if len(node.children) > 1:
             self.labels.append( (f'L{myScope}','PERO SI') )
+
+            self.labels.append( (f'L{myScope} -> FALSO',f'L{self.scopes}') )
+            self.labelsDict[self.scopes] = 'PERO SI'
+
             self.scopes+=1
+            trueScope = self.scopes
+            self.labels.append( (f'L{myScope} -> VERDADERO',f'L{trueScope}') )
+
+            if myScope == self.scopes:
+                self.scopes+=1
             expr = node.children[0]
             sent = node.children[1]
             peroSi = node.children[2]
@@ -196,14 +225,29 @@ class SemanticAnalyzer():
             self.checkNode(peroSi)
 
             self.labels.append( (f'L{myScope}','PERO SI') )
+            if self.scopes == trueScope:
+                self.scopes+=1
     
     def checkSiNo(self, node):
-        myScope = self.scopes
+        prevScope = None
+        tempDict = self.labelsDict.copy()
+
+        for key in self.labelsDict.keys():
+            if self.labelsDict.get(key) == 'PERO SI':
+                prevScope = key
+            tempDict.pop(key)
+        self.labelsDict = tempDict
+
+        if prevScope:
+            myScope = prevScope
+        else:
+            myScope = self.scopes
         sent = node.children[0]
 
         if len(sent.children) > 0:    
             self.labels.append( (f'L{myScope}','SI NO') )
-            self.scopes+=1
+            if myScope == self.scopes:
+                self.scopes+=1
 
             for child in sent.children:
                 self.checkNode(child)
@@ -228,12 +272,19 @@ class SemanticAnalyzer():
 
         self.labels.append( (f'L{myScope}','MIENTRAS') )
         self.scopes+=1
+        self.labels.append( (f'L{myScope} -> FALSO',f'L{self.scopes}') )
+        self.labelsDict[self.scopes] = 'MIENTRAS'
+        self.scopes+=1
+        trueScope = self.scopes
+        self.labels.append( (f'L{myScope} -> VERDADERO',f'L{trueScope}') )
 
         self.checkNode(expr)
         for child in sent.children:
             self.checkNode(child)
         
         self.labels.append( (f'L{myScope}','MIENTRAS') )
+        if self.scopes == trueScope:
+            self.scopes+=1
 
     def checkOpArit(self, node):
         left = node.children[0]
