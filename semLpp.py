@@ -64,7 +64,8 @@ class SemanticAnalyzer():
         #Check if the var exists in the self.variables dictionary
         if varId not in self.variables:
             self.variables[varId] = { 'category' : varType, 'value' : 'NULO'}
-            self.labels.append( ('DECLARACION','NULO','',f'T{self.tempVars}') )
+            self.labels.append( ('->','NULO','',f'T{self.tempVars}') )
+            self.labels.append( ('->',varId,f'T{self.tempVars}','') )
             self.tempVars+=1
         else:
             self.throwError(f'ERROR: Variable {varId} no declarada.')
@@ -111,7 +112,8 @@ class SemanticAnalyzer():
             
             self.variables.pop(varId)
             self.variables[varId] = varValue
-            self.labels.append( ('ASIGNACION',varValue.get('value'),'',f'T{self.tempVars}') )
+            self.labels.append( ('->',varValue.get('value'),'',f'T{self.tempVars}') )
+            self.labels.append( ('->',varId,f'T{self.tempVars}','') )
             self.tempVars+=1
         #If not in the self.variables dictionary, throw error
         else:
@@ -137,7 +139,8 @@ class SemanticAnalyzer():
 
             if varType == varValue.get('category'):
                 self.variables[varId] = { 'category': varType, 'value': varValue.get('value')}
-                self.labels.append( ('INSTANCIA',varValue.get('value'),'',f'T{self.tempVars}') )
+                self.labels.append( ('->',varValue.get('value'),'',f'T{self.tempVars}') )
+                self.labels.append( ('->',varId,f'T{self.tempVars}','') )
                 self.tempVars+=1
             else:
                 self.throwError(f'ERROR: Tipos incompatibles para asignación. {varType} {varId} ? {varValue.get("category")} {varValue.get("value")}')
@@ -150,7 +153,8 @@ class SemanticAnalyzer():
             self.variables[procName] = {'category': 'PROCEDIMIENTO', 'value': procName}
             self.labels.append( (f'L{myScope}','PROCEDIMIENTO') )
             self.scopes+=1
-            self.labels.append( ('INSTANCIA',procName,'',f'T{self.tempVars}') )
+            self.labels.append( ('->','PROCEDIMIENTO','',f'T{self.tempVars}') )
+            self.labels.append( ('->',procName,f'T{self.tempVars}','') )
             self.tempVars+=1
         else:
             self.throwError(f'ERROR: Procedimiento {procName} no existe.')
